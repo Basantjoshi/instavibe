@@ -89,24 +89,24 @@ export const getUserPost = async (req, res) => {
 }
 export const likePost = async (req, res) => {
     try {
-        const likeKrneWalaUserKiId = req.id;
+        const TheOneWhoLikesId = req.id;
         const postId = req.params.id; 
         const post = await Post.findById(postId);
         if (!post) return res.status(404).json({ message: 'Post not found', success: false });
 
         // like logic started
-        await post.updateOne({ $addToSet: { likes: likeKrneWalaUserKiId } });
+        await post.updateOne({ $addToSet: { likes: TheOneWhoLikesId } });
         await post.save();
 
         // implement socket io for real time notification
-        const user = await User.findById(likeKrneWalaUserKiId).select('username profilePicture');
+        const user = await User.findById(TheOneWhoLikesId).select('username profilePicture');
          
         const postOwnerId = post.author.toString();
-        if(postOwnerId !== likeKrneWalaUserKiId){
+        if(postOwnerId !== TheOneWhoLikesId){
             // emit a notification event
             const notification = {
                 type:'like',
-                userId:likeKrneWalaUserKiId,
+                userId:TheOneWhoLikesId,
                 userDetails:user,
                 postId,
                 message:'Your post was liked',
@@ -123,23 +123,23 @@ export const likePost = async (req, res) => {
 }
 export const dislikePost = async (req, res) => {
     try {
-        const likeKrneWalaUserKiId = req.id;
+        const TheOneWhoLikesId = req.id;
         const postId = req.params.id;
         const post = await Post.findById(postId);
         if (!post) return res.status(404).json({ message: 'Post not found', success: false });
 
         // like logic started
-        await post.updateOne({ $pull: { likes: likeKrneWalaUserKiId } });
+        await post.updateOne({ $pull: { likes: TheOneWhoLikesId } });
         await post.save();
 
         // implement socket io for real time notification
-        const user = await User.findById(likeKrneWalaUserKiId).select('username profilePicture');
+        const user = await User.findById(TheOneWhoLikesId).select('username profilePicture');
         const postOwnerId = post.author.toString();
-        if(postOwnerId !== likeKrneWalaUserKiId){
+        if(postOwnerId !== TheOneWhoLikesId){
             // emit a notification event
             const notification = {
                 type:'dislike',
-                userId:likeKrneWalaUserKiId,
+                userId:TheOneWhoLikesId,
                 userDetails:user,
                 postId,
                 message:'Your post was liked'
@@ -158,7 +158,7 @@ export const dislikePost = async (req, res) => {
 export const addComment = async (req,res) =>{
     try {
         const postId = req.params.id;
-        const commentKrneWalaUserKiId = req.id;
+        const TheOneWhoCommentsId = req.id;
 
         const {text} = req.body;
 
@@ -168,7 +168,7 @@ export const addComment = async (req,res) =>{
 
         const comment = await Comment.create({
             text,
-            author:commentKrneWalaUserKiId,
+            author:TheOneWhoCommentsId,
             post:postId
         })
 
